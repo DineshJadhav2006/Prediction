@@ -6,7 +6,7 @@ const API_KEY = window.API_KEY;
 const params = new URLSearchParams(window.location.search);
 const lat = params.get("lat");
 const lon = params.get("lon");
- 
+
 // DOM Elements
 const languageSelect = document.getElementById("language-select");
 const detailsTitle = document.getElementById("details-title");
@@ -14,71 +14,11 @@ const riskAssessmentEl = document.getElementById("risk-assessment");
 const temperatureEl = document.getElementById("temperature");
 const humidityEl = document.getElementById("humidity");
 const rainfallEl = document.getElementById("rainfall");
-const pressureEl = document.getElementById("pressure");
 const windSpeedEl = document.getElementById("wind-speed");
 const chatBox = document.getElementById("chat-box");
 const chatInput = document.getElementById("chat-input");
 const sendBtn = document.getElementById("send-btn");
- 
-// Disaster care messages for chatbot
-const disasterCare = {
-  flood: {
-    en: [
-      "Move livestock and machinery to higher ground.",
-      "Clear field drainage and secure property.",
-      "Postpone fertilizer or pesticide use until water recedes.",
-      "Follow local government advisories.",
-    ],
-    mr: [
-      "पशुधन आणि यंत्र उंच जागी हलवा.",
-      "शेतातील निचरा मोकळा ठेवा, वस्तू सुरक्षित ठेवा.",
-      "पाणी ओसरल्यावर खत किंवा औषध वापरा.",
-      "स्थानिक सरकारी सूचनांचे पालन करा.",
-    ],
-    hi: [
-      "पशु और मशीनें ऊँची जगह पर रखें.",
-      "खेत की नाली साफ रखें.",
-      "पानी उतरने के बाद खाद या दवा दें.",
-      "स्थानीय प्रशासन के निर्देशों का पालन करें.",
-    ],
-  },
-  drought: {
-    en: [
-      "Mulch fields to retain soil moisture.",
-      "Choose drought-resistant seed varieties.",
-      "Adjust irrigation for critical crop stages.",
-      "Offer shade and extra water to livestock.",
-      "Postpone planting, harvesting, or spraying when dry.",
-    ],
-    mr: [
-      "मल्च वापरून ओलावा टिकवा.",
-      "दुष्काळ प्रतिकार करणारे वाण निवडा.",
-      "महत्त्वाच्या अवस्थेसाठी सिंचनाचे नियोजन करा.",
-      "पशांना सावली आणि पाणी द्या.",
-      "कोरड्या काळात लागवड, कापणी आणि फवारणी पुढे ढकला.",
-    ],
-    hi: [
-      "मल्च से नमी बनाए रखें.",
-      "सूखा प्रतिरोधी बीज चुनें.",
-      "जरूरी फसल स्टेज के लिए सिंचाई बदलें.",
-      "पशु को छाया और पानी दें.",
-      "सूखे में बोवाई, कटाई, छिड़काव टालें.",
-    ],
-  },
-};
- 
-function getCareAdvice(type, lang) {
-  if (disasterCare[type] && disasterCare[type][lang]) {
-    return `<ul>${disasterCare[type][lang]
-      .map((txt) => <li>${txt}</li>)
-      .join("")}</ul>`;
-  }
-  // Fallback to English if no translation available
-  return `<ul>${disasterCare[type]["en"]
-    .map((txt) => <li>${txt}</li>)
-    .join("")}</ul>`;
-}
- 
+
 // Fetch current weather data
 async function getCurrentWeatherData(lat, lon) {
     try {
@@ -102,146 +42,154 @@ async function getForecastData(lat, lon) {
         return null;
     }
 }
- 
-// Risk level analysis based on forecast rainfall
+
+// Risk level analysis
 function getRiskLevel(forecastData) {
-  let maxRain = 0;
-  const next24hForecasts = forecastData.list.slice(0, 8); // roughly next 24 hours
-  next24hForecasts.forEach((item) => {
-    const rainVolume = item.rain?.["3h"] || 0;
-    if (rainVolume > maxRain) maxRain = rainVolume;
-  });
-  if (maxRain > 10) {
-    return { level: "danger", value: maxRain };
-  } else if (maxRain > 5) {
-    return { level: "warning", value: maxRain };
-  }
-  return { level: "normal", value: maxRain };
+    let maxRain = 0;
+    const next24hForecasts = forecastData.list.slice(0, 8);
+    next24hForecasts.forEach((item) => {
+        const rainVolume = item.rain?.["3h"] || 0;
+        if (rainVolume > maxRain) maxRain = rainVolume;
+    });
+    
+    if (maxRain > 10) {
+        return { level: "danger", value: maxRain };
+    } else if (maxRain > 5) {
+        return { level: "warning", value: maxRain };
+    }
+    return { level: "normal", value: maxRain };
 }
- 
-// Update the risk assessment text and styling safely
+
+// Update risk assessment
 function updateRiskAssessment(risk) {
-  const riskAssessmentEl = document.getElementById("risk-assessment"); // reset classes
- 
-  riskAssessmentEl.className = "risk-assessment"; // reset classes
- 
-  if (risk.level === "danger") {
-    riskAssessmentEl.textContent = `Red Zone! Predicted rainfall of ${risk.value.toFixed(
-      2
-    )} mm is high.`;
-    riskAssessmentEl.classList.add("danger");
-  } else if (risk.level === "warning") {
-    riskAssessmentEl.textContent = `Yellow Zone! Predicted rainfall of ${risk.value.toFixed(
-      2
-    )} mm is moderate.`;
-    riskAssessmentEl.classList.add("warning");
-  } else {
-    riskAssessmentEl.textContent = `Green Zone. Predicted rainfall of ${risk.value.toFixed(
-      2
-    )} mm is safe.`;
-    riskAssessmentEl.classList.add("normal");
-  }
+    riskAssessmentEl.className = "risk-assessment";
+    
+    if (risk.level === "danger") {
+        riskAssessmentEl.textContent = `Red Zone! Predicted rainfall of ${risk.value.toFixed(2)} mm is high.`;
+        riskAssessmentEl.classList.add("danger");
+    } else if (risk.level === "warning") {
+        riskAssessmentEl.textContent = `Yellow Zone! Predicted rainfall of ${risk.value.toFixed(2)} mm is moderate.`;
+        riskAssessmentEl.classList.add("warning");
+    } else {
+        riskAssessmentEl.textContent = `Green Zone. Predicted rainfall of ${risk.value.toFixed(2)} mm is safe.`;
+        riskAssessmentEl.classList.add("normal");
+    }
 }
- 
-// Update current weather data in UI
+
+// Update current conditions
 function updateCurrentConditions(current) {
-  if (!current || !temperatureEl) return;
- 
-  temperatureEl.textContent = '${current.main.temp.toFixed(1)} °C';
-  humidityEl.textContent = '${current.main.humidity} %';
-  rainfallEl.textContent = '${(current.rain?.["1h"] || 0).toFixed(1)} mm';
-  pressureEl.textContent = '${current.main.pressure} hPa';
-  windSpeedEl.textContent = '${(current.wind.speed * 3.6).toFixed(1)} km/h';
+    if (!current) return;
+    
+    temperatureEl.textContent = `${current.main.temp.toFixed(1)} °C`;
+    humidityEl.textContent = `${current.main.humidity} %`;
+    rainfallEl.textContent = `${(current.rain?.["1h"] || 0).toFixed(1)} mm`;
+    windSpeedEl.textContent = `${(current.wind.speed * 3.6).toFixed(1)} km/h`;
 }
- 
-// Chatbot UI helper functions
+
+// Initialize map
+function initializeMap(lat, lon, cityName) {
+    if (typeof L !== 'undefined') {
+        const map = L.map('map').setView([lat, lon], 12);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        
+        L.marker([lat, lon]).addTo(map)
+            .bindPopup(`<b>${cityName}</b><br>Selected Location`)
+            .openPopup();
+    }
+}
+
+// Chatbot functionality
 function displayUserMsg(message) {
-  if (!chatBox) return;
-  chatBox.innerHTML += <div class="chat-message user-message">${message}</div>;
-  chatBox.scrollTop = chatBox.scrollHeight;
+    if (!chatBox) return;
+    chatBox.innerHTML += `<div class="chat-message user-message">${message}</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
- 
+
 function displayBotMsg(message) {
-  if (!chatBox) return;
-  chatBox.innerHTML += <div class="chat-message ai-message">${message}</div>;
-  chatBox.scrollTop = chatBox.scrollHeight;
+    if (!chatBox) return;
+    chatBox.innerHTML += `<div class="chat-message ai-message">${message}</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
- 
-// Handler for chat input send
-function handleChat() {
-  if (!chatInput) return;
- 
-  const msg = chatInput.value.trim().toLowerCase();
-  if (!msg) return;
- 
-  const lang = languageSelect ? languageSelect.value : "en";
- 
-  displayUserMsg(msg);
- 
-  let response = "";
-  if (msg.includes("flood") || msg.includes("पूर") || msg.includes("बाढ़")) {
-    response = '<b>Flood Care Advice:</b> ${getCareAdvice("flood", lang)}';
-  } else if (
-    msg.includes("drought") ||
- 
-    msg.includes("दुष्काळ") ||
-    msg.includes("सूखा")
-  ) {
-    response = '<b>Drought Care Advice:</b> ${getCareAdvice("drought", lang)}';
-  } else if (
-    msg.includes("care") ||
-    msg.includes("काळजी") ||
-    msg.includes("सावधानी")
-  ) {
-    response = `<b>Care Advice:</b> ${getCareAdvice(
-      "flood",
-      lang
-    )} ${getCareAdvice("drought", lang)}`;
-  } else {
-    response = <p>I'm here to help with flood and drought care advice. Please ask about how to protect your crops or livestock during these conditions.</p>;
-  }
- 
-  displayBotMsg(response);
- 
-  chatInput.value = "";
+
+async function handleChat() {
+    if (!chatInput) return;
+    
+    const msg = chatInput.value.trim();
+    if (!msg) return;
+    
+    const lang = languageSelect ? languageSelect.value : "en";
+    
+    displayUserMsg(msg);
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/chat`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                message: msg,
+                language: lang
+            })
+        });
+        
+        const data = await response.json();
+        displayBotMsg(data.response);
+    } catch (error) {
+        displayBotMsg("Sorry, I'm having trouble connecting. Please try again later.");
+    }
+    
+    chatInput.value = "";
 }
- 
-// Initialization function on page load
+
+// Main initialization function
 async function initializePage() {
-  if (!lat || !lon) {
-    if (detailsTitle)
-      detailsTitle.textContent =
-        "Error: No location selected. Please select a location first.";
-    return;
-  }
- 
-  if (detailsTitle) detailsTitle.textContent = "Loading weather data...";
- 
-  const forecastData = await getForecastData(lat, lon);
-  const currentData = await getCurrentWeatherData(lat, lon);
- 
-  if (!forecastData || !currentData) {
-    if (detailsTitle)
-      detailsTitle.textContent = "Error: Unable to retrieve weather data.";
-    return;
-  }
- 
-  if (detailsTitle)
-    detailsTitle.textContent = 'Weather and Risk for ${forecastData.city.name}';
- 
-  updateRiskAssessment(getRiskLevel(forecastData));
-  updateCurrentConditions(currentData);
+    if (!lat || !lon) {
+        if (detailsTitle) {
+            detailsTitle.textContent = "Error: No location selected. Please select a location first.";
+        }
+        return;
+    }
+    
+    if (detailsTitle) detailsTitle.textContent = "Loading weather data...";
+    
+    const [forecastData, currentData] = await Promise.all([
+        getForecastData(lat, lon),
+        getCurrentWeatherData(lat, lon)
+    ]);
+    
+    if (!forecastData || !currentData) {
+        if (detailsTitle) {
+            detailsTitle.textContent = "Error: Unable to retrieve weather data.";
+        }
+        return;
+    }
+    
+    const cityName = forecastData.city.name;
+    if (detailsTitle) {
+        detailsTitle.textContent = `Weather and Risk for ${cityName}`;
+    }
+    
+    const risk = getRiskLevel(forecastData);
+    updateRiskAssessment(risk);
+    updateCurrentConditions(currentData);
+    
+    // Initialize map with city location
+    initializeMap(parseFloat(lat), parseFloat(lon), cityName);
 }
- 
+
 // Event listeners
 if (sendBtn && chatInput) {
-  sendBtn.addEventListener("click", handleChat);
-  chatInput.addEventListener("keyup", (e) => {
-    if (e.key === "Enter") {
-      handleChat();
-    }
-  });
+    sendBtn.addEventListener("click", handleChat);
+    chatInput.addEventListener("keyup", (e) => {
+        if (e.key === "Enter") {
+            handleChat();
+        }
+    });
 }
- 
-// Run initialization on DOM load
+
+// Initialize page on load
 window.addEventListener("DOMContentLoaded", initializePage);
