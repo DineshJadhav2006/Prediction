@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Details - Disaster Prediction</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+    
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div>
+                    <h2 id="details-title"><i class="fas fa-map-marker-alt"></i> Loading...</h2>
+                    <p class="subtitle">Real-time weather monitoring</p>
+                </div>
+                <select id="language-select">
+                    <option value="en">English</option>
+                    <option value="mr">मराठी</option>
+                    <option value="hi">हिंदी</option>
+                </select>
+            </div>
+
+            <div class="info-box">
+                <h3><i class="fas fa-exclamation-triangle"></i> Risk Assessment</h3>
+                <div id="risk-assessment" class="risk-assessment">Calculating risk...</div>
+            </div>
+
+            <div class="info-box">
+                <h3><i class="fas fa-thermometer-half"></i> Current Conditions</h3>
+                <div class="current-conditions">
+                    <div class="card">
+                        <h4><i class="fas fa-temperature-high"></i> Temperature</h4>
+                        <p id="temperature">--°C</p>
+                    </div>
+                    <div class="card">
+                        <h4><i class="fas fa-tint"></i> Humidity</h4>
+                        <p id="humidity">--%</p>
+                    </div>
+                </div>
+                <div class="current-conditions">
+                    <div class="card">
+                        <h4><i class="fas fa-cloud-rain"></i> Rainfall</h4>
+                        <p id="rainfall">-- mm</p>
+                    </div>
+                    <div class="card">
+                        <h4><i class="fas fa-wind"></i> Wind Speed</h4>
+                        <p id="wind-speed">-- km/h</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-container">
+                <div class="chat-header">
+                    <h3><i class="fas fa-robot"></i> Disaster Care Assistant</h3>
+                </div>
+                <div class="chat-box" id="chat-box">
+                    <div class="chat-message ai-message">
+                        Hello! I can help you with flood and drought care advice. Ask me about protecting your crops or livestock.
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="Ask about disaster care...">
+                    <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <h3><i class="fas fa-map"></i> Location Map</h3>
+            <div class="charts-maps">
+                <div class="map-container">
+                    <div id="map"></div>
+                </div>
+                <div class="forecast-container">
+                    <canvas id="forecast-chart"></canvas>
+                </div>
+            </div>
+
+            <h3><i class="fas fa-shield-alt"></i> Recommended Actions</h3>
+            <div class="info-box" id="recommended-actions">
+                <div id="actions-content">
+                    <ul id="recommendations-list">
+                        <li>Loading recommendations...</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3><i class="fas fa-seedling"></i> Agricultural Advisory</h3>
+            <div class="info-box" id="crop-advisory">
+                <div id="crop-content">
+                    <p>Agricultural advice based on current weather conditions will appear here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="config.js"></script>
+    <script src="details.js"></script>
+</body>
+</html>

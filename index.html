@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IN National Monsoon Watch - Welcome</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="home-body">
+    <div class="home-container">
+        <div class="home-header">
+            <i class="fas fa-cloud-sun-rain header-icon"></i>
+            <h1>IN National Disaster prediction Watch</h1>
+            <p><h3>AI-Powered Disaster prediction & Alert System Support for Maharashtra</h3></p>
+        </div>
+ 
+        <div class="search-container">
+            <h3>Find Your Location</h3>
+            <div class="search-box">
+                <input type="text" id="location-search-input" placeholder="Enter any city or village in Maharashtra..." autocomplete="off">
+                <button id="current-location-btn" aria-label="Use Current Location"><i class="fas fa-crosshairs"></i></button>
+            </div>
+            <div id="search-results" class="search-results-container"></div>
+             <p id="loading-spinner" style="display: none; text-align: center;">Loading...</p>
+        </div>
+ 
+        <div class="summary-preview">
+            <h3>State-wide Risk Summary</h3>
+            <div class="summary-boxes">
+                 <div class="summary-box danger-border">
+                    <h4><span class="legend-color danger-bg"></span>Red Zone</h4>
+                    <ul id="danger-list"><li>-</li></ul>
+                </div>
+                <div class="summary-box warning-border">
+                    <h4><span class="legend-color warning-bg"></span>Yellow Zone</h4>
+                    <ul id="warning-list"><li>-</li></ul>
+                </div>
+                <div class="summary-box normal-border">
+                    <h4><span class="legend-color normal-bg"></span>Green Zone</h4>
+                    <ul id="normal-list"><li>-</li></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+ 
+    <script src="config.js"></script>
+    <script src="home.js"></script>
+</body>
+</html>
